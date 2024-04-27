@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 // Define the interface for the chat client
 interface ChatClientInterface extends Remote {
@@ -12,13 +15,13 @@ interface ChatClientInterface extends Remote {
 public class ChatClient extends java.rmi.server.UnicastRemoteObject implements ChatClientInterface {
     private String username;
     private ChatServerInterface server;
-    private JTextArea chatArea; // Initialize chatArea here
+    private JTextArea chatArea;
 
     public ChatClient(String username, ChatServerInterface server) throws RemoteException {
         this.username = username;
         this.server = server;
         server.registerClient(this, username);
-        chatArea = new JTextArea(); // Initialize chatArea here
+        chatArea = new JTextArea();
     }
 
     public void sendMessage(String message) throws RemoteException {
@@ -32,11 +35,24 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
     }
 
     public void createAndShowGUI() {
-        JFrame frame = new JFrame("Chat Application");
+        JFrame frame = new JFrame("Chat Application - " + username);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        JScrollPane chatScrollPane = new JScrollPane(chatArea); // Use initialized chatArea
+        // Panel for username and time
+        JPanel userInfoPanel = new JPanel(new BorderLayout());
+
+        // Display username
+        JLabel usernameLabel = new JLabel("Username: " + username);
+        userInfoPanel.add(usernameLabel, BorderLayout.WEST);
+
+        // Display current time
+        JLabel timeLabel = new JLabel(getCurrentTime());
+        userInfoPanel.add(timeLabel, BorderLayout.EAST);
+
+        frame.add(userInfoPanel, BorderLayout.NORTH);
+
+        JScrollPane chatScrollPane = new JScrollPane(chatArea);
         chatArea.setEditable(false);
         frame.add(chatScrollPane, BorderLayout.CENTER);
 
@@ -57,10 +73,19 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
         });
         frame.add(messageField, BorderLayout.SOUTH);
 
+        // Rest of the code for buttons...
+
         frame.setSize(400, 300);
         frame.setVisible(true);
 
         messageField.requestFocusInWindow();
+    }
+
+    // Method to get current time in a formatted string
+    private String getCurrentTime() {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        return "Time: " + dateFormat.format(date);
     }
 
     public static void main(String[] args) {
