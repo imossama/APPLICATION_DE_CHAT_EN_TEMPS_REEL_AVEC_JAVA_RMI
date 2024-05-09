@@ -113,6 +113,39 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
             }
         });
         timer.start();
+
+        // Action listener for sending messages
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String message = messageField.getText().trim();
+                if (!message.isEmpty()) {
+                    try {
+                        sendMessage(message);
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+                    messageField.setText("");
+                }
+            }
+        });
+
+        // Action listener for clearing chat
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chatArea.setText("");
+            }
+        });
+
+        // Action listener for emoji button
+        emojiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EmojiDialog emojiDialog = new EmojiDialog(frame, messageField);
+                emojiDialog.setVisible(true);
+            }
+        });
     }
 
     private String getCurrentTime() {
