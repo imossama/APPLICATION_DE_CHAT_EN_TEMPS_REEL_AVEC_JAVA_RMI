@@ -70,3 +70,8 @@ L'Application de Chat en Temps Réel avec RMI est développé par OSSAMA ETTAQAF
 - Soufiane LAAROUSSI
 
 Ce projet est réalisé dans le cadre du cours universitaire sur les Systèmes Distribués.
+
+**Résultat**
+
+![image](https://github.com/imossama/Real-Time-RMI-Chat-App/assets/119759894/3c571c0d-1a4c-4b6c-aebf-851496604cee)
+
