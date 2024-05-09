@@ -1,3 +1,4 @@
+// ChatServer.java
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.*;
@@ -6,21 +7,39 @@ import java.util.Map;
 
 // Define the interface for the chat server
 interface ChatServerInterface extends Remote {
-    void registerClient(ChatClientInterface client, String username) throws RemoteException;
+    String registerClient(ChatClientInterface client, String username) throws RemoteException; // Updated method signature
     void broadcastMessage(String message, String sender) throws RemoteException;
 }
 
 // Implement the chat server
 public class ChatServer extends UnicastRemoteObject implements ChatServerInterface {
     private Map<String, ChatClientInterface> clients;
+    private Map<String, Integer> usernameCounts; // Keep track of username counts
 
     public ChatServer() throws RemoteException {
         clients = new HashMap<>();
+        usernameCounts = new HashMap<>();
     }
 
-    public void registerClient(ChatClientInterface client, String username) throws RemoteException {
-        clients.put(username, client);
-        broadcastMessage(username + " has joined the chat.", "Server");
+    public String registerClient(ChatClientInterface client, String username) throws RemoteException {
+        // Ensure the username is unique
+        String uniqueUsername = makeUniqueUsername(username);
+
+        clients.put(uniqueUsername, client);
+        usernameCounts.put(username, usernameCounts.getOrDefault(username, 0) + 1);
+
+        broadcastMessage(uniqueUsername + " has joined the chat.", "Server");
+
+        return uniqueUsername; // Return the unique username to the client
+    }
+
+    private String makeUniqueUsername(String username) {
+        int count = usernameCounts.getOrDefault(username, 0);
+        String uniqueUsername = username;
+        if (count > 0) {
+            uniqueUsername = username + "(" + count + ")";
+        }
+        return uniqueUsername;
     }
 
     public void broadcastMessage(String message, String sender) throws RemoteException {
@@ -40,9 +59,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInterfa
             // Bind the server object to the registry
             Naming.rebind("ChatServer", server);
 
-            System.out.println("Chat Server is running...");
+            System.out.println("Chat server is running...");
         } catch (Exception e) {
-            System.err.println("Chat Server exception: " + e.getMessage());
+            System.err.println("Chat server exception: " + e.getMessage());
             e.printStackTrace();
         }
     }
