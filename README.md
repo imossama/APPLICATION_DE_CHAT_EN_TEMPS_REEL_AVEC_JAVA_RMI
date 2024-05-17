@@ -1,4 +1,4 @@
-# Application de Chat en Temps Réel avec RMI
+# Cahier des Charges de l'Application de Chat en Temps Réel avec RMI
 
 <div align="center">
    <h3>Image de l'application finale</h3>
@@ -7,14 +7,14 @@
 
 Ce projet vise à créer une plateforme de chat permettant à plusieurs utilisateurs de communiquer en temps réel dans une salle de discussion virtuelle. L'application sera basée sur le middleware RMI (Remote Method Invocation) en Java, offrant une expérience de chat fluide et sécurisée.
 
-## Table des matières
-1. [Objectifs](#objectifs)
+## Table des Matières
+1. [Objectifs du Projet](#objectifs)
 2. [Fonctionnalités](#fonctionnalités)
 3. [Technologies Utilisées](#technologies-utilisées)
 4. [Installation et Utilisation](#installation-et-utilisation)
 5. [Auteur](#auteur)
 
-## Objectifs
+## Objectifs du Projet <a name="objectifs"></a>
 
 Le but principal de ce projet est de fournir une plateforme de chat conviviale et robuste, permettant aux utilisateurs de communiquer en temps réel dans une seule salle de chat. Les objectifs spécifiques incluent :
 
@@ -23,7 +23,7 @@ Le but principal de ce projet est de fournir une plateforme de chat conviviale e
 - Assurer une transmission rapide et fiable des messages entre les utilisateurs.
 - Intégrer des fonctionnalités de sécurité pour protéger la confidentialité des utilisateurs et prévenir les attaques malveillantes.
 
-## Fonctionnalités
+## Fonctionnalités <a name="fonctionnalités"></a>
 
 ### Interface Utilisateur
 
@@ -43,24 +43,30 @@ Le but principal de ce projet est de fournir une plateforme de chat conviviale e
 
 ### Gestion des Utilisateurs
 
-- Authentifie les utilisateurs lors de leur connexion pour garantir la sécurité du système.
 - Permet aux utilisateurs de choisir un nom d'utilisateur unique lors de la connexion.
 - Gère les cas où plusieurs utilisateurs choisissent le même nom d'utilisateur.
 
-## Technologies Utilisées
+## Technologies Utilisées <a name="technologies-utilisées"></a>
 
-- **Java**: Langage de programmation principal pour le développement de l'application de chat.
-- **Java Swing**: Utilisé pour créer l'interface utilisateur graphique de l'application de chat, y compris les zones de texte et les boutons.
-- **RMI (Remote Method Invocation)**: Middleware Java utilisé pour faciliter la communication entre les différents clients et le serveur de chat.
+1. **Java**:
+   - Langage de programmation principal pour le développement de l'application de chat.
+   - Utilisation de Java pour la logique métier, la gestion des interactions utilisateur et la communication réseau.
 
-## Installation et Utilisation
+2. **Java Swing**:
+   - Utilisé pour créer l'interface utilisateur graphique de l'application de chat, y compris les zones de texte et les boutons.
+
+3. **RMI (Remote Method Invocation)**:
+   - Middleware Java utilisé pour faciliter la communication entre les différents clients et le serveur de chat.
+   - Permet l'appel de méthodes distantes entre les composants du système.
+
+## Installation et Utilisation <a name="installation-et-utilisation"></a>
 
 1. Cloner le dépôt GitHub.
 2. Compiler les fichiers Java.
 3. Exécuter le serveur RMI.
 4. Exécuter l'application cliente.
 
-## Auteur
+## Auteur <a name="auteur"></a>
 
 - OSSAMA ETTAQAFI
 - Ali GHOUFRANE
