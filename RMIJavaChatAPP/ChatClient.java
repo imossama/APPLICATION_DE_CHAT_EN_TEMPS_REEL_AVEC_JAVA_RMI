@@ -1,16 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.rmi.*;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.swing.Timer;
-
-interface ChatClientInterface extends Remote {
-    void receiveMessage(String message, String sender) throws RemoteException;
-    String getUsername() throws RemoteException;
-}
 
 public class ChatClient extends java.rmi.server.UnicastRemoteObject implements ChatClientInterface {
     private String username;
@@ -23,7 +20,7 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
         this.username = username;
         this.server = server;
         chatArea = new JTextArea();
-
+        
         this.username = server.registerClient(this, username);
     }
 
@@ -49,30 +46,34 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
         JPanel userInfoPanel = new JPanel();
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.X_AXIS));
 
-        // Change username button with pen emoji
-        JButton changeUsernameButton = new JButton("\uD83D\uDD8B"); // Pen emoji
-        changeUsernameButton.setContentAreaFilled(false);
-        changeUsernameButton.setBorderPainted(false);
+        JButton changeUsernameButton = new JButton("🔧");
+        changeUsernameButton.setToolTipText("Change Username");
+        changeUsernameButton.setMargin(new Insets(5, 10, 5, 10));
         changeUsernameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String newUsername = JOptionPane.showInputDialog("Enter your new username:");
                 if (newUsername != null && !newUsername.isEmpty()) {
-                    username = newUsername;
-                    usernameLabel.setText("Username: " + username);
-                    frame.setTitle("Chat Application - " + username);
+                    try {
+                        server.changeUsername(username, newUsername); // Broadcast username change to server
+                        username = newUsername;
+                        usernameLabel.setText("Username: " + username);
+                        frame.setTitle("Chat Application - " + username);
+                        JOptionPane.showMessageDialog(frame, "Username changed successfully to: " + username, "Username Changed", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
 
-        // Username label
         usernameLabel = new JLabel("Username: " + username);
         userInfoPanel.add(usernameLabel);
+        userInfoPanel.add(Box.createHorizontalStrut(10));
         userInfoPanel.add(changeUsernameButton);
 
-        // Time label
         timeLabel = new JLabel();
-        userInfoPanel.add(Box.createHorizontalGlue()); // Add a flexible space
+        userInfoPanel.add(Box.createHorizontalGlue());
         userInfoPanel.add(timeLabel);
 
         frame.add(userInfoPanel, BorderLayout.NORTH);
@@ -87,25 +88,61 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
         JTextField messageField = new JTextField();
         messagePanel.add(messageField, BorderLayout.CENTER);
 
-        JButton sendButton = new JButton("Send");
-        messagePanel.add(sendButton, BorderLayout.EAST);
+        JButton sendButton = new JButton("✉");
+        sendButton.setMargin(new Insets(5, 10, 5, 10));
+        // messagePanel.add(sendButton, BorderLayout.EAST);
 
         bottomPanel.add(messagePanel, BorderLayout.CENTER);
 
-        JButton emojiButton = new JButton("Emoji");
-        bottomPanel.add(emojiButton, BorderLayout.WEST);
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 5, 5));
+        buttonPanel.add(sendButton);
 
-        JButton clearButton = new JButton("Clear");
-        bottomPanel.add(clearButton, BorderLayout.EAST);
+        JButton clearButton = new JButton("❌");
+        clearButton.setMargin(new Insets(5, 10, 5, 10));
+        buttonPanel.add(clearButton);
+
+        JButton emojiButton = new JButton("😀");
+        emojiButton.setToolTipText("Emoji");
+        emojiButton.setMargin(new Insets(5, 10, 5, 10));
+        emojiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EmojiDialog emojiDialog = new EmojiDialog(frame, messageField);
+                emojiDialog.setVisible(true);
+            }
+        });
+        buttonPanel.add(emojiButton);
+
+        JButton usersButton = new JButton("👥");
+        usersButton.setToolTipText("Users");
+        usersButton.setMargin(new Insets(5, 10, 5, 10));
+        usersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    List<String> users = server.getConnectedUsers();
+                    if (users.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "There's no user connected to the chat room.", "Users", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, String.join("\n", users), "Connected Users", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(frame, "Error fetching users: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            }
+        });
+        buttonPanel.add(usersButton);
+
+        bottomPanel.add(buttonPanel, BorderLayout.EAST);
 
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
-        frame.setSize(400, 300);
+        frame.setSize(600, 400);
         frame.setVisible(true);
 
         messageField.requestFocusInWindow();
 
-        // Start a timer to update the time label every second
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,7 +151,6 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
         });
         timer.start();
 
-        // Action listener for sending messages
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,20 +166,10 @@ public class ChatClient extends java.rmi.server.UnicastRemoteObject implements C
             }
         });
 
-        // Action listener for clearing chat
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 chatArea.setText("");
-            }
-        });
-
-        // Action listener for emoji button
-        emojiButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EmojiDialog emojiDialog = new EmojiDialog(frame, messageField);
-                emojiDialog.setVisible(true);
             }
         });
     }

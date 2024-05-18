@@ -1,20 +1,15 @@
-// ChatServer.java
-import java.rmi.*;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.server.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.rmi.Naming; // Import the Naming class
+import java.rmi.registry.LocateRegistry; // Import the LocateRegistry class
 
-// Define the interface for the chat server
-interface ChatServerInterface extends Remote {
-    String registerClient(ChatClientInterface client, String username) throws RemoteException; // Updated method signature
-    void broadcastMessage(String message, String sender) throws RemoteException;
-}
-
-// Implement the chat server
 public class ChatServer extends UnicastRemoteObject implements ChatServerInterface {
     private Map<String, ChatClientInterface> clients;
-    private Map<String, Integer> usernameCounts; // Keep track of username counts
+    private Map<String, Integer> usernameCounts;
 
     public ChatServer() throws RemoteException {
         clients = new HashMap<>();
@@ -22,7 +17,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInterfa
     }
 
     public String registerClient(ChatClientInterface client, String username) throws RemoteException {
-        // Ensure the username is unique
         String uniqueUsername = makeUniqueUsername(username);
 
         clients.put(uniqueUsername, client);
@@ -30,7 +24,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInterfa
 
         broadcastMessage(uniqueUsername + " has joined the chat.", "Server");
 
-        return uniqueUsername; // Return the unique username to the client
+        return uniqueUsername;
     }
 
     private String makeUniqueUsername(String username) {
@@ -48,15 +42,31 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInterfa
         }
     }
 
+    public List<String> getConnectedUsers() throws RemoteException {
+        return new ArrayList<>(clients.keySet());
+    }
+
+    public void changeUsername(String oldUsername, String newUsername) throws RemoteException {
+        if (!clients.containsKey(oldUsername)) {
+            throw new RemoteException("User not found: " + oldUsername);
+        }
+        
+        ChatClientInterface client = clients.remove(oldUsername);
+        clients.put(newUsername, client);
+        
+        int count = usernameCounts.getOrDefault(newUsername, 0);
+        usernameCounts.put(newUsername, count + 1);
+        
+        broadcastMessage(oldUsername + " has changed their username to " + newUsername, "Server");
+    }
+
     public static void main(String[] args) {
         try {
-            // Create and export the RMI registry
             LocateRegistry.createRegistry(1099);
 
-            // Create the server object
             ChatServer server = new ChatServer();
 
-            // Bind the server object to the registry
+            // Use Naming.rebind() to register the server object
             Naming.rebind("ChatServer", server);
 
             System.out.println("Chat server is running...");
