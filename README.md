@@ -2,17 +2,17 @@
 
 <div align="center">
    <h3>Image de l'application finale</h3>
-   <img src="https://github.com/imossama/Real-Time-RMI-Chat-App/assets/119759894/3c571c0d-1a4c-4b6c-aebf-851496604cee" width="500"/>
+   <img src="https://github.com/imossama/APPLICATION_DE_CHAT_EN_TEMPS_REEL_AVEC_JAVA_RMI/assets/119759894/42ce0764-04ea-4b3b-9ff6-f11b5eec67b0" width="500"/>
 </div>
 
 Ce projet vise à créer une plateforme de chat permettant à plusieurs utilisateurs de communiquer en temps réel dans une salle de discussion virtuelle. L'application sera basée sur le middleware RMI (Remote Method Invocation) en Java, offrant une expérience de chat fluide et sécurisée.
 
 ## Table des Matières
-1. [Objectifs du Projet](#objectifs)
-2. [Fonctionnalités](#fonctionnalités)
-3. [Technologies Utilisées](#technologies-utilisées)
-4. [Installation et Utilisation](#installation-et-utilisation)
-5. [Auteur](#auteur)
+- [Objectifs du Projet](#objectifs)
+- [Fonctionnalités](#fonctionnalités)
+- [Technologies Utilisées](#technologies-utilisées)
+- [Installation et Utilisation](#installation-et-utilisation)
+- [Auteur](#auteur)
 
 ## Objectifs du Projet <a name="objectifs"></a>
 
@@ -65,9 +65,3 @@ Le but principal de ce projet est de fournir une plateforme de chat conviviale e
 2. Compiler les fichiers Java.
 3. Exécuter le serveur RMI.
 4. Exécuter l'application cliente.
-
-## Auteur <a name="auteur"></a>
-
-- OSSAMA ETTAQAFI
-- Ali GHOUFRANE
-- Soufiane LAAROUSSI
