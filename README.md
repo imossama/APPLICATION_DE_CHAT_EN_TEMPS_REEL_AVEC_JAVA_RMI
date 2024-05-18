@@ -12,7 +12,6 @@ Ce projet vise à créer une plateforme de chat permettant à plusieurs utilisat
 - [Fonctionnalités](#fonctionnalités)
 - [Technologies Utilisées](#technologies-utilisées)
 - [Installation et Utilisation](#installation-et-utilisation)
-- [Auteur](#auteur)
 
 ## Objectifs du Projet <a name="objectifs"></a>
 
