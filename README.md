@@ -65,9 +65,3 @@ Le but principal de ce projet est de fournir une plateforme de chat conviviale e
 2. Compiler les fichiers Java.
 3. Exécuter le serveur RMI.
 4. Exécuter l'application cliente.
-
-## Auteur <a name="auteur"></a>
-
-- OSSAMA ETTAQAFI
-- Ali GHOUFRANE
-- Soufiane LAAROUSSI
